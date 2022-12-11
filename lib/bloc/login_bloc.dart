@@ -1,7 +1,7 @@
 
 
 import 'package:bloc/bloc.dart';
-import 'package:block_task2/utils/const.dart';
+
 import 'package:meta/meta.dart';
 
 import '../server/net.dart';
@@ -16,17 +16,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginEvent>((event, emit) async {
       if (event is CheckUserEvent) {
           print("Apiga jonatildi");
-        if (event.username == MyConst.userName &&
-            event.password == MyConst.password) {
-          print("Apiga jonatildi");
-          var result = await getResult();
-          emit(CheckUserResult(statusCode: result));
-        } else {
-          print("Apiga jonatilmadi");
-          emit(CheckUserResult(statusCode: 403));
+          String result = await login(event.email,event.password);
+          emit(CheckUserResult(token: result));
         }
       }
-    });
+    );
   }
 }
 

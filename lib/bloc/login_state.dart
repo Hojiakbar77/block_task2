@@ -6,7 +6,7 @@ abstract class LoginState {}
 class LoginInitial extends LoginState {}
 
 class CheckUserResult extends LoginState{
-  final int statusCode;
+  final String token;
 
-  CheckUserResult({required this.statusCode});
+  CheckUserResult({required this.token});
 }

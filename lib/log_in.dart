@@ -13,7 +13,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   @override
   final formKey = GlobalKey<FormState>();
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   late LoginBloc loginBloc;
@@ -40,7 +40,8 @@ class _LoginState extends State<Login> {
           if(state is CheckUserResult){
               final snackBar = SnackBar(
                 content: Text(
-                  state.statusCode.toString()
+                 state.token
+
                 ),
                 action: SnackBarAction(
                   label: "Ok",
@@ -57,41 +58,47 @@ class _LoginState extends State<Login> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  regName("Telefon raqam"),
-                  TextFormField(
-                    controller: usernameController,
-                    // onSaved: (value){
-                    //   userName=value!;
-                    // },
-                    validator: (value) {
-                      // if(value!=userName){
-                      //   return "UserName not valid";
-                      // }
-                    },
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                  regName("Email"),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: emailController,
+                      // onSaved: (value){
+                      //   userName=value!;
+                      // },
+                      validator: (value) {
+                        // if(value!=userName){
+                        //   return "UserName not valid";
+                        // }
+                      },
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12))),
+                      ),
                     ),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   regName("Parol"),
-                  TextFormField(
-                    controller: passwordController,
-                    // onSaved: (value){
-                    //   password=value!;
-                    // },
-                    // validator: (value){
-                    //   if(value!=password){
-                    //     return "password not valid";
-                    //   }
-                    // },
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: passwordController,
+                      // onSaved: (value){
+                      //   password=value!;
+                      // },
+                      // validator: (value){
+                      //   if(value!=password){
+                      //     return "password not valid";
+                      //   }
+                      // },
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12))),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -100,9 +107,8 @@ class _LoginState extends State<Login> {
                   InkWell(
                     onTap: () {
                       loginBloc.add(
-                        CheckUserEvent(
-                          username: usernameController.text,
-                          password: passwordController.text,
+                        CheckUserEvent(email: emailController.text,password: passwordController.text
+
                         ),
                       );
                       // final isValid = formKey.currentState!.validate();

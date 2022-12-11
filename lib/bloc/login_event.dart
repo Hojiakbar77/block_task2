@@ -6,8 +6,8 @@ abstract class LoginEvent {}
 class InitialLoginBloc extends LoginEvent{}
 
 class CheckUserEvent extends LoginEvent{
-  final String username;
+  final String email;
   final String password;
 
-  CheckUserEvent({required this.username, required this.password});
+  CheckUserEvent({required this.email, required this.password});
 }
