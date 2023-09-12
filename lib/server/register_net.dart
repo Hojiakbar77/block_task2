@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-Future login(String email, String password) async {
+Future register(String name ,String email, String password) async {
   try {
     Response response = await post(
       Uri.parse('https://fir-app-35c83-default-rtdb.firebaseio.com/email.json'),
-      body: jsonEncode({"email": email, "password": password}),
+      body: jsonEncode({"name":name,"email": email, "password": password}),
     );
 
     final data = jsonDecode(response.body);

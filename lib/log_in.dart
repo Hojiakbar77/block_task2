@@ -1,5 +1,7 @@
 import 'package:block_task2/bloc/login_bloc.dart';
-import 'package:block_task2/utils/const.dart';
+import 'package:block_task2/cart_page.dart';
+import 'package:block_task2/regbloc/register_bloc.dart';
+import 'package:block_task2/registr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +13,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  @override
   final formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -33,122 +34,123 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Center(child: Text('Log in')),
       ),
-      body: BlocConsumer<LoginBloc, LoginState>(
-        listener: (context, state) {
-          if(state is CheckUserResult){
-              final snackBar = SnackBar(
-                content: Text(
-                 state.token
-
+      body: Center(
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              regName("Email"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  controller: emailController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Email cannot be empty';
+                    } else if (!isValidEmail(value)) {
+                      return 'Please enter a valid email';
+                    }
+                    return null; // Return null if the validation is successful
+                  },
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                  ),
                 ),
-                action: SnackBarAction(
-                  label: "Ok",
-                  onPressed: () {},
+              ),
+              const SizedBox(height: 10),
+              regName("Password"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Password cannot be empty';
+                    } else if (value.length < 6) {
+                      return 'Password must be at least 6 characters long';
+                    }
+                    return null; // Return null if the validation is successful
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                  ),
                 ),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
-        },
-        builder: (context, state) {
-          return Center(
-            child: Form(
-              key: formKey,
-              child: Column(
+              ),
+              const SizedBox(height: 15),
+              InkWell(
+                onTap: () {
+                  if (formKey.currentState!.validate()) {
+                    // Validation passed, continue with your login logic
+                    loginBloc.add(
+                      CheckUserEvent(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      ),
+                    );
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const CardPage(),
+                      ),
+                          (route) => false, // This predicate removes all routes in the stack
+                    );
+                  }
+                },
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 15,
+                  width: MediaQuery.of(context).size.height / 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.blue,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        'Log in',
+                        textScaleFactor: 2,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  regName("Email"),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: emailController,
-                      // onSaved: (value){
-                      //   userName=value!;
-                      // },
-                      validator: (value) {
-                        // if(value!=userName){
-                        //   return "UserName not valid";
-                        // }
-                      },
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12))),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  regName("Parol"),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: passwordController,
-                      // onSaved: (value){
-                      //   password=value!;
-                      // },
-                      // validator: (value){
-                      //   if(value!=password){
-                      //     return "password not valid";
-                      //   }
-                      // },
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12))),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  InkWell(
+                  const Text('If you don\'t have an account'),
+                  const SizedBox(width: 5),
+                  GestureDetector(
                     onTap: () {
-                      loginBloc.add(
-                        CheckUserEvent(email: emailController.text,password: passwordController.text
-
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) => RegisterBloc()..add(InitialRegisterBloc()),
+                            child:  RegistrPage(),
+                          ),
                         ),
                       );
-                      // final isValid = formKey.currentState!.validate();
-                      // if (isValid) {
-                      //   formKey.currentState!.save();
-                      //   final snackBar = SnackBar(
-                      //     content: Text(
-                      //         "UserName ${MyConst.userName}  password ${MyConst.password}"),
-                      //     action: SnackBarAction(
-                      //       label: "Ok",
-                      //       onPressed: () {},
-                      //     ),
-                      //   );
-                      //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      // }
                     },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height / 15,
-                      width: MediaQuery.of(context).size.height / 4,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.blue,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Text(
-                            'Log in',
-                            textScaleFactor: 2,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
+                    child: const Text(
+                      " Register",
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
-              ),
-            ),
-          );
-        },
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -164,4 +166,10 @@ Widget regName(String name1) {
       ],
     ),
   );
+}
+
+bool isValidEmail(String email) {
+  // You can implement your own email validation logic here
+  // For a basic example, I'm checking if it contains "@" symbol
+  return email.contains('@');
 }
